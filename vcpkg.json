@@ -1,0 +1,10 @@
+{
+    "name": "mindweaver",
+    "version-string": "0.1.0",
+    "dependencies": [
+        "pybind11",
+        "python3",
+        "glfw3",
+        "glad"
+    ]
+}
