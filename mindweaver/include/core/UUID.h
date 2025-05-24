@@ -15,7 +15,8 @@ namespace MindWeaver
     struct UUID
     {
     public:
-        // Generate a random UUID (version 4)
+        /// @brief Default constructor, initializes to a nil UUID (all zeros).
+        UUID() : bytes{} {} // Zero-initialize the array
 
         /// @brief Generates a random UUID (version 4).
         /// This method uses a random number generator to create a 128-bit UUID,
