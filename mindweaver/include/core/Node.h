@@ -27,13 +27,13 @@ namespace MindWeaver
     /// A node may contain inputs, outputs, and properties that are manipulated in the script.
     struct Node
     {
-        UUID id;          /// @brief Unique identifier for the node.
-        std::string name; /// @brief Display name of the node.
-        NodeType type;    /// @brief Type of the node (e.g., ControlFlow, Function, Variable, Operator).
+        UUID id;           /// @brief Unique identifier for the node.
+        std::string name;  /// @brief Display name of the node.
+        NodeType type;     /// @brief Type of the node (e.g., ControlFlow, Function, Variable, Operator).
+        Position position; /// @brief Node position in Workspace
 
-        std::unordered_map<UUID, std::shared_ptr<Pin>> inputs;  /// @brief List of input pins for the node.
-        std::unordered_map<UUID, std::shared_ptr<Pin>> outputs; /// @brief List of output pins for the node.
-        Position position;                                      /// @brief Node position in Workspace
+        std::unordered_map<UUID, std::shared_ptr<Pin>> inputPins;  /// @brief Map of input pins.
+        std::unordered_map<UUID, std::shared_ptr<Pin>> outputPins; /// @brief Map of output pins.
 
         /// @brief Constructs a new node with the specified ID, name, and type.
         /// @param id Unique identifier for the node.
@@ -41,26 +41,50 @@ namespace MindWeaver
         /// @param type Type of the node (e.g., Operator, Function).
         Node(UUID id, const std::string &name, NodeType type) : id(id), name(name), type(type) {};
 
-        /// @brief Adds an input pin to the node.
-        /// @param name Name of the input pin.
-        /// @param type Type of data for the input pin (e.g., Int, Bool).
-        void AddInput(const std::string &name, PinType type)
+        /// @brief Adds an input pin to the node's backend representation.
+        /// @param pin_name Logical name of the input pin.
+        /// @param pin_type Logical type of data for the input pin.
+        /// @return A shared pointer to the newly created input Pin.
+        std::shared_ptr<Pin> AddInputPin(const std::string &pin_name, PinType pin_type)
         {
-            UUID pinID = UUID::generate();
-            inputs.emplace(pinID, std::make_shared<Pin>(pinID, name, type, PinDirection::Input));
+            UUID pinID = UUID::generate(); // Generate UUID using your static method
+            auto pin = std::make_shared<Pin>(pinID, pin_name, pin_type, PinDirection::Input, this->id);
+            inputPins.emplace(pinID, pin);
+            return pin;
         }
 
-        /// @brief Adds an output pin to the node.
-        /// @param name Name of the output pin.
-        /// @param type Type of data for the output pin (e.g., Int, Float).
-        void AddOutput(const std::string &name, PinType type)
+        /// @brief Adds an output pin to the node's backend representation.
+        /// @param pin_name Logical name of the output pin.
+        /// @param pin_type Logical type of data for the output pin.
+        /// @return A shared pointer to the newly created output Pin.
+        std::shared_ptr<Pin> AddOutputPin(const std::string &pin_name, PinType pin_type)
         {
-            UUID pinID = UUID::generate();
-            outputs.emplace(pinID, std::make_shared<Pin>(pinID, name, type, PinDirection::Output));
+            UUID pinID = UUID::generate(); // Generate UUID using your static method
+            auto pin = std::make_shared<Pin>(pinID, pin_name, pin_type, PinDirection::Output, this->id);
+            outputPins.emplace(pinID, pin);
+            return pin;
         }
 
         /// @brief Set the stored position of the node
         /// @param pos2D Position of the node in ImNodes grid space
         void SetPosition(const Position pos2D) { position = pos2D; }
+
+        /// @brief Retrieves an input pin by its ID.
+        /// @param pin_id The UUID of the input pin.
+        /// @return A shared_ptr to the Pin if found, nullptr otherwise.
+        std::shared_ptr<Pin> GetInputPin(const UUID &pin_id) const
+        {
+            auto it = inputPins.find(pin_id);
+            return (it != inputPins.end()) ? it->second : nullptr;
+        }
+
+        /// @brief Retrieves an output pin by its ID.
+        /// @param pin_id The UUID of the output pin.
+        /// @return A shared_ptr to the Pin if found, nullptr otherwise.
+        std::shared_ptr<Pin> GetOutputPin(const UUID &pin_id) const
+        {
+            auto it = outputPins.find(pin_id);
+            return (it != outputPins.end()) ? it->second : nullptr;
+        }
     };
 } // namespace MindWeaver

@@ -32,13 +32,18 @@ namespace MindWeaver
         std::string name;       /// @brief Display name of the pin.
         PinType type;           /// @brief The type of the pin (Exec, Int, Float, etc.).
         PinDirection direction; /// @brief The direction of the pin (Input or Output).
+        UUID ownerNodeID;       /// @brief ID of the node this pin belongs to.
 
         /// @brief Constructs a new Pin with specified properties.
-        /// @param id Unique identifier for the pin.
-        /// @param name Display name of the pin.
-        /// @param type Type of the pin.
-        /// @param dir Direction of the pin.
-        Pin(UUID id, const std::string &name, PinType type, PinDirection dir)
-            : id(id), name(name), type(type), direction(dir) {};
+        /// @param pin_id Unique identifier for the pin.
+        /// @param pin_name Logical name of the pin.
+        /// @param pin_type Type of the pin.
+        /// @param pin_dir Direction of the pin.
+        /// @param node_id ID of the node that owns this pin.
+        Pin(UUID pin_id, const std::string &pin_name, PinType pin_type, PinDirection pin_dir, UUID node_id)
+            : id(pin_id), name(pin_name), type(pin_type), direction(pin_dir), ownerNodeID(node_id)
+        {
+            /// @todo Implement any backend-specific initialization for a pin
+        }
     };
 } // namespace MindWeaver
